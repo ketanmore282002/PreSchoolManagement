@@ -1,7 +1,7 @@
 body{
     margin: 0px;
     padding: 0px;
-     background-image:  url("../static/img/bgimag.jpg");
+     background-image:  url("../img/bgimag.jpg");
       background-size: cover;   
        background-position: top;   
       background-repeat: no-repeat;
