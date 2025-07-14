@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/login.css">
+    <title>Login Page</title>
+</head>
+
+<body>
+    <div class="card p-4 m-auto">
+        <h1 class="mb-4">Login Page</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <form action="{{ url_for('do_login') }}" method="post">
+            <div class="mb-3">
+                <label for="txt1" class="form-label">User name</label>
+                <input type="text" name="username" class="form-control" placeholder="Enter user name" id="txt1" required />
+            </div>
+            <div class="mb-3">
+                <label for="txt2" class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Enter password" id="txt2" required/>
+            </div>
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="togglePassword">
+                <label class="form-check-label" for="togglePassword">Show password</label>
+            </div>
+            <button type="submit" class=" mb-2" value="Login">Login</button>
+            <br>
+            <a href="registration_page.html">Create an account</a>
+        </form>
+    </div>
+
+    <script>
+        const psw1 = document.getElementById("txt2");
+        const toggleCheckbox = document.getElementById("togglePassword");
+
+        toggleCheckbox.addEventListener("change", function () {
+            psw1.type = this.checked ? "text" : "password";
+        });
+    </script>
+</body>
+
+</html>
