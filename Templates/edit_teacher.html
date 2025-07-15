@@ -41,7 +41,7 @@
             style="font-size: large; color: white; ">Welcome : {{ session['username'] }}</span>
     </header>
     <div class="wrapper">
-        <aside id="sidebar">
+       <aside id="sidebar">
             <div class="d-flex">
                 <button id="toggle-btn" type="button">
 
@@ -75,9 +75,9 @@
                     </ul>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="{{ url_for('pending_parents') }}" class="sidebar-link">
                         <i class="fa-regular fa-user"></i>
-                        <span>Student </span>
+                        <span> Parent  </span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -221,10 +221,16 @@
                 </form>
             </div> -->
         </div>
+    </div>
+     <footer class="bg-dark text-white text-center py-3 ">
+                <div class="container m-auto">
+                    <p class="mb-1">&copy; {{ current_year }} PreSchool Management. All rights reserved.</p>
+                    <p class="mb-0">Admin Panel | <a href="#" class="text-warning text-decoration-none">Help</a> | <a
+                            href="#" class="text-warning text-decoration-none">Contact Support</a></p>
+                </div>
+            </footer>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
-            crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"crossorigin="anonymous"></script>
         <script src="../static/js/script.js"></script>
 </body>
 

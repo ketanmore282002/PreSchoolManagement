@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../static/css/login.css">
-    <title>Login Page</title>
+    <title> Register Page</title>
 </head>
 
 <body>
     <div class="card p-4 m-auto">
-        <h1 class="mb-4">Login Page</h1>
+        <h1 class="mb-4"> Register as Parent</h1>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -20,23 +20,27 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
-        <form action="{{ url_for('do_login') }}" method="post">
-            <div class="mb-3">
-                <label for="txt1" class="form-label">User name</label>
-                <input type="text" name="username" class="form-control" placeholder="Enter user name" id="txt1" required />
-            </div>
-            <div class="mb-3">
-                <label for="txt2" class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Enter password" id="txt2" required/>
-            </div>
-            <div class="form-check mb-3">
+         <form action="{{ url_for('parent_register') }} " method="POST">
+        <div class="mb-3">
+            <label for="name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control" name="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Create Password</label>
+            <input type="password" class="form-control" id="txt2" name="password" required>
+        </div>
+        <div class="form-check mb-3">
                 <input type="checkbox" class="form-check-input" id="togglePassword">
                 <label class="form-check-label" for="togglePassword">Show password</label>
             </div>
-            <button type="submit" class=" mb-2" value="Login">Login</button>
-            <br>
-            <a href="{{ url_for('parent_register') }}">Register as Parent</a>
-        </form>
+        <button type="submit" class="btn btn-primary">Register</button>
+        <a href="{{ url_for('login') }}" class="btn btn-secondary">Back to Login</a>
+    </form>
+       
     </div>
 
     <script>

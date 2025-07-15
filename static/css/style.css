@@ -62,7 +62,7 @@ body {
      display: flex;
 }
 .main{ 
-    min-height: 100vh;
+    min-height: 85vh;
     width: 100%;
     overflow: hidden;
     transition: all 0.25s ease-in-out;
