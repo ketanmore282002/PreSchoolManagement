@@ -214,6 +214,91 @@ def pending_parents():
     cursor.close()
 
     return render_template('pending_parents.html', parents=parents)
+#    student registration
+@app.route('/students', methods=['GET', 'POST'])
+def students():
+    if session.get('role') != 'admin':
+        flash("Unauthorized access", "danger")
+        return redirect(url_for('login'))
+
+    cursor = db.cursor(dictionary=True)
+
+    # POST - Register student
+    if request.method == 'POST':
+        name = request.form['name']
+        dob = request.form['dob']
+        gender = request.form['gender']
+        student_class = request.form['student_class']
+        parent_id = request.form['parent_id']
+
+        cursor.execute("""
+            INSERT INTO students (name, dob, gender, class, parent_user_id)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (name, dob, gender, student_class, parent_id))
+        db.commit()
+        flash("Student registered successfully", "success")
+        return redirect(url_for('students'))
+
+    # GET - Fetch parents + students
+    cursor.execute("SELECT id, name FROM users WHERE role='parent' AND status='active'")
+    parents = cursor.fetchall()
+
+    cursor.execute("""
+        SELECT students.*, users.name AS parent_name 
+        FROM students 
+        JOIN users ON students.parent_user_id = users.id
+    """)
+    students = cursor.fetchall()
+
+    return render_template('students.html', students=students, parents=parents)
+@app.route('/delete_student/<int:id>')
+def delete_student(id):
+    if session.get('role') != 'admin':
+        flash("Unauthorized access", "danger")
+        return redirect(url_for('login'))
+
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM students WHERE id = %s", (id,))
+    db.commit()
+    flash("Student deleted successfully!", "danger")
+    return redirect(url_for('students'))
+@app.route('/edit_student/<int:id>', methods=['GET', 'POST'])
+def edit_student(id):
+    if session.get('role') != 'admin':
+        flash("Unauthorized access", "danger")
+        return redirect(url_for('login'))
+
+    cursor = db.cursor(dictionary=True)
+
+    if request.method == 'POST':
+        name = request.form['name']
+        dob = request.form['dob']
+        gender = request.form['gender']
+        student_class = request.form['student_class']
+        parent_id = request.form['parent_id']
+
+        cursor.execute("""
+            UPDATE students 
+            SET name=%s, dob=%s, gender=%s, class=%s, parent_user_id=%s 
+            WHERE id=%s
+        """, (name, dob, gender, student_class, parent_id, id))
+        db.commit()
+        flash("Student updated successfully!", "success")
+        return redirect(url_for('students'))
+
+    # GET request - prefill form
+    cursor.execute("SELECT * FROM students WHERE id = %s", (id,))
+    student = cursor.fetchone()
+
+    if not student:
+        flash("Student not found", "danger")
+        return redirect(url_for('students'))
+
+    cursor.execute("SELECT id, name FROM users WHERE role = 'parent' AND status = 'active'")
+    parents = cursor.fetchall()
+
+    return render_template('edit_student.html', student=student, parents=parents)
+
 
 
 @app.route('/admin')
