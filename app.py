@@ -148,6 +148,74 @@ def toggle_teacher_status(id):
     flash(f"Status changed to {new_status}", "warning")
     return redirect(url_for('view_teachers'))
 
+      # prarent registrarion
+@app.route('/register_parent', methods=['GET', 'POST'])
+def parent_register():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+
+        hashed_password = generate_password_hash(password)
+
+        cursor = db.cursor()
+        cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
+        if cursor.fetchone():
+            flash("Email already exists!", "warning")
+            return redirect(url_for('parent_register'))
+
+        cursor.execute(
+            "INSERT INTO users (name, email, password, role, status) VALUES (%s, %s, %s, %s, %s)",
+            (name, email, hashed_password, 'parent', 'pending')
+        )
+        db.commit()
+        cursor.close()
+
+        flash("Registration successful! Awaiting admin approval.", "info")
+        return redirect(url_for('login'))
+
+    return render_template('parent_register.html')
+
+@app.route('/approve_parent/<int:id>')
+def approve_parent(id):
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    cursor = db.cursor()
+    cursor.execute("UPDATE users SET status = 'active' WHERE id = %s AND role = 'parent'", (id,))
+    db.commit()
+    cursor.close()
+
+    flash("Parent approved successfully", "success")
+    return redirect(url_for('pending_parents'))
+
+@app.route('/reject_parent/<int:id>')
+def reject_parent(id):
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM users WHERE id = %s AND role = 'parent'", (id,))
+    db.commit()
+    cursor.close()
+
+    flash("Parent request rejected", "danger")
+    return redirect(url_for('pending_parents'))
+
+# show parent list
+@app.route('/pending_parents')
+def pending_parents():
+    if session.get('role') != 'admin':
+        return redirect(url_for('login'))
+
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT id, name, email FROM users WHERE role = 'parent' AND status = 'pending'")
+    parents = cursor.fetchall()
+    cursor.close()
+
+    return render_template('pending_parents.html', parents=parents)
+
+
 @app.route('/admin')
 def admin_home():
     if session.get('role') == 'admin':
