@@ -21,7 +21,7 @@
             style="font-size: large; color: white; ">Welcome : {{ session['username'] }}</span>
     </header>
     <div class="wrapper">
-         <aside id="sidebar">
+        <aside id="sidebar">
             <div class="d-flex">
                 <button id="toggle-btn" type="button">
 
@@ -51,7 +51,8 @@
                                     class="fa-solid fa-user-plus"></i> Teacher</a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="" class="sidebar-link"> <i class="fa-solid fa-eye"></i>View</a>
+                            <a href="{{ url_for('view_teachers') }}" class="sidebar-link"> <i
+                                    class="fa-solid fa-eye"></i>View</a>
                         </li>
                     </ul>
                 </li>
@@ -61,10 +62,16 @@
                         <span> Parent Requsts</span>
                     </a>
                 </li>
-                 <li class="sidebar-item">
+                <li class="sidebar-item">
                     <a href="{{ url_for('students') }}" class="sidebar-link">
                         <i class="fa-solid fa-graduation-cap"></i>
                         <span>Students</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{{ url_for('manage_timetable') }}" class="sidebar-link">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span>Manage Timetable</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -127,6 +134,7 @@
                 </a>
             </div>
         </aside>
+
 
 
 

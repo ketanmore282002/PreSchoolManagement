@@ -298,6 +298,97 @@ def edit_student(id):
     parents = cursor.fetchall()
 
     return render_template('edit_student.html', student=student, parents=parents)
+# ADD
+@app.route('/manage_timetable', methods=['GET', 'POST'])
+def manage_timetable():
+    if session.get('role') != 'admin':
+        flash("Unauthorized access", "danger")
+        return redirect(url_for('login'))
+
+    cursor = db.cursor(dictionary=True)
+
+    # Handle form submission to add timetable
+    if request.method == 'POST' and 'class_name' in request.form:
+        class_name = request.form['class_name']
+        for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']:
+            period_1 = request.form.get(f'{day}_period_1')
+            period_2 = request.form.get(f'{day}_period_2')
+            period_3 = request.form.get(f'{day}_period_3')
+            period_4 = request.form.get(f'{day}_period_4')
+            period_5 = request.form.get(f'{day}_period_5')
+            period_6 = request.form.get(f'{day}_period_6')
+
+            cursor.execute("""
+                INSERT INTO timetable (class_name, day_of_week, period_1, period_2, period_3, period_4, period_5, period_6)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (class_name, day, period_1, period_2, period_3, period_4, period_5, period_6))
+        db.commit()
+        flash("Timetable saved!", "success")
+        return redirect(url_for('manage_timetable'))
+
+    # For view section: fetch all distinct class names
+    cursor.execute("SELECT DISTINCT class_name FROM timetable")
+    classes = [row['class_name'] for row in cursor.fetchall()]
+
+    # If a class is selected via GET
+    class_selected = request.args.get('view_class')
+    timetable_data = []
+    if class_selected:
+        cursor.execute("""
+            SELECT * FROM timetable WHERE class_name = %s 
+            ORDER BY FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')
+        """, (class_selected,))
+        timetable_data = cursor.fetchall()
+
+    return render_template("manage_timetable.html", classes=classes, timetable=timetable_data, selected_class=class_selected)
+
+#teacher home page
+@app.route('/teacher')
+def teacher_home():
+    if session.get('role') != 'teacher':
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("SELECT class_assigned FROM teachers WHERE user_id = %s", (user_id,))
+    teacher = cursor.fetchone()
+
+    timetable = []
+    if teacher:
+        class_assigned = teacher['class_assigned']
+        cursor.execute("""
+            SELECT * FROM timetable 
+            WHERE class_name = %s 
+            ORDER BY FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')
+        """, (class_assigned,))
+        timetable = cursor.fetchall()
+
+    return render_template('teacher_home.html', timetable=timetable)
+# parent home page
+@app.route('/parent')
+def parent_home():
+    if session.get('role') != 'parent':
+        return redirect(url_for('login'))
+
+    user_id = session.get('user_id')
+    cursor = db.cursor(dictionary=True)
+
+    # Avoid using 'class' directly due to reserved word conflict
+    cursor.execute("SELECT class AS class_name FROM students WHERE parent_user_id = %s LIMIT 1", (user_id,))
+    student = cursor.fetchone()
+
+    timetable = []
+    if student:
+        class_name = student['class_name']
+        cursor.execute("""
+            SELECT * FROM timetable 
+            WHERE class_name = %s 
+            ORDER BY FIELD(day_of_week, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')
+        """, (class_name,))
+        timetable = cursor.fetchall()
+
+    cursor.close()
+    return render_template('parent_home.html', timetable=timetable)
 
 
 
@@ -306,11 +397,7 @@ def admin_home():
     if session.get('role') == 'admin':
         return render_template('admin_home.html')
     return redirect(url_for('login'))
-@app.route('/teacher')
-def teacher_home():
-    if session.get('role') == 'teacher':
-        return render_template('teacher_home.html')
-    return redirect(url_for('login'))
+
 @app.route('/logout')
 def logout():
     session.clear()

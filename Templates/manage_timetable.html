@@ -159,51 +159,83 @@
 
         <div class="main p-2 " style="margin-left: 10px;">
             <div class="m_header ">
-                <h1>Register New Teacher</h1>
+                <h1>manage_timetable</h1>
             </div>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
             <div class="row my-3">
                 <div class=" ml-3 col-5">
 
 
                     <div class=" c_1  px-3">
 
-                        <form action="{{ url_for('register_teacher') }}" method="POST">
-                            <h2>Register New Teacher</h2>
+                        <form method="POST">
                             <div class="mb-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" name="name" class="form-control" required>
+                                <label>Class</label>
+                                <input type="text" name="class_name" class="form-control" required>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" name="email" class="form-control" required>
+
+                            {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] %}
+                            <h5>{{ day }}</h5>
+                            <div class="row">
+                                {% for i in range(1, 7) %}
+                                <div class="col-md-2 mb-3">
+                                    <input type="text" name="{{ day }}_period_{{ i }}" class="form-control"
+                                        placeholder="Period {{ i }}">
+                                </div>
+                                {% endfor %}
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Assigned Class</label>
-                                <input type="text" name="assigned_class" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Register Teacher</button>
+                            {% endfor %}
+                            <button type="submit" class="btn btn-primary">Save Timetable</button>
                         </form>
+
                     </div>
 
 
                 </div>
-                <div class=" d-flex justify-content-center col-7">
-                    <img src="../static/img/ccc.jpg" width="400px" alt="" srcset="">
-                </div>
+                <div class="  justify-content-center col-7">
+                    <form method="GET">
+                        <label>Select Class:</label>
+                        <select name="view_class" class="form-select w-25 d-inline-block">
+                            <option value="">-- Select --</option>
+                            {% for c in classes %}
+                            <option value="{{ c }}" {% if selected_class==c %}selected{% endif %}>{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-secondary">View</button>
+                    </form>
 
+                    {% if timetable %}
+                    <table class="table table-bordered mt-4">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Period 1</th>
+                                <th>Period 2</th>
+                                <th>Period 3</th>
+                                <th>Period 4</th>
+                                <th>Period 5</th>
+                                <th>Period 6</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in timetable %}
+                            <tr>
+                                <td>{{ row.day_of_week }}</td>
+                                <td>{{ row.period_1 }}</td>
+                                <td>{{ row.period_2 }}</td>
+                                <td>{{ row.period_3 }}</td>
+                                <td>{{ row.period_4 }}</td>
+                                <td>{{ row.period_5 }}</td>
+                                <td>{{ row.period_6 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
             </div>
+
         </div>
+    </div>
     </div>
     <footer class="bg-dark text-white text-center py-3 ">
         <div class="container m-auto">
