@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-
+      <link rel="stylesheet" href="../static/css/calendar.css">
     <link rel="stylesheet" href="../static/css/dashbord.css">
     <link rel="stylesheet" href="../static/css/style.css">
     <style>
@@ -166,7 +166,7 @@
 
         <div class="main p-2 " style="margin-left: 10px;">
             <div class="m_header ">
-                <h1>Class Timetable</h1>
+                <h1>calendar</h1>
             </div>
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -175,55 +175,64 @@
             {% endfor %}
             {% endif %}
             {% endwith %}
-            <div class="row my-3">
-                <div class=" ml-3 col-7">
-
-
-                    <div class=" c_1  px-3">
-
-                        {% if timetable %}
-                        <table class="table table-bordered mt-3">
-                            <thead>
-                                <tr>
-                                    <th>Day</th>
-                                    <th>Period 1</th>
-                                    <th>Period 2</th>
-                                    <th>Period 3</th>
-                                    <th>Period 4</th>
-                                    <th>Period 5</th>
-                                    <th>Period 6</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for row in timetable %}
-                                <tr>
-                                    <td>{{ row.day_of_week }}</td>
-                                    <td>{{ row.period_1 }}</td>
-                                    <td>{{ row.period_2 }}</td>
-                                    <td>{{ row.period_3 }}</td>
-                                    <td>{{ row.period_4 }}</td>
-                                    <td>{{ row.period_5 }}</td>
-                                    <td>{{ row.period_6 }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% else %}
-                        <p>No timetable found for your class.</p>
-                        {% endif %}
+              <div class="container">
+                <div class="left">
+                    <div class="calendar">
+                        <div class="month">
+                            <i class="fas fa-angle-left prev"></i>
+                            <div class="date">december 2015</div>
+                            <i class="fas fa-angle-right next"></i>
+                        </div>
+                        <div class="weekdays">
+                            <div>Sun</div>
+                            <div>Mon</div>
+                            <div>Tue</div>
+                            <div>Wed</div>
+                            <div>Thu</div>
+                            <div>Fri</div>
+                            <div>Sat</div>
+                        </div>
+                        <div class="days"></div>
+                        <div class="goto-today">
+                            <div class="goto">
+                                <input type="text" placeholder="mm/yyyy" class="date-input" />
+                                <button class="goto-btn">Go</button>
+                            </div>
+                            <button class="today-btn">Today</button>
+                        </div>
                     </div>
-
-
                 </div>
-                <div class=" d-flex justify-content-center col-5">
-                    <img src="../static/img/ccc.jpg" width="400px" alt="" srcset="">
+                <div class="right">
+                    <div class="today-date">
+                        <div class="event-day">wed</div>
+                        <div class="event-date">12th december 2022</div>
+                    </div>
+                    <div class="events"></div>
+                    <div class="add-event-wrapper">
+                        <div class="add-event-header">
+                            <div class="title">Add Event</div>
+                            <i class="fas fa-times close"></i>
+                        </div>
+                        <div class="add-event-body">
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Name" class="event-name" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Time From" class="event-time-from" />
+                            </div>
+                            <div class="add-event-input">
+                                <input type="text" placeholder="Event Time To" class="event-time-to" />
+                            </div>
+                        </div>
+                        
+                    </div>
                 </div>
-
-            </div>
+               
+              </div>
         </div>
     </div>
     <footer class="bg-dark text-white text-center py-3 ">
-        <div class="container m-auto">
+        <div class=" m-auto">
             <p class="mb-1">&copy; {{ current_year }} PreSchool Management. All rights reserved.</p>
             <p class="mb-0">Admin Panel | <a href="#" class="text-warning text-decoration-none">Help</a> | <a href="#"
                     class="text-warning text-decoration-none">Contact Support</a></p>
@@ -234,6 +243,7 @@
         integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
         crossorigin="anonymous"></script>
     <script src="../static/js/script.js"></script>
+     <script src="../static/js/calendar.js"></script>
 </body>
 
 </html>

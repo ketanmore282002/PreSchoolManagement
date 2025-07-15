@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash ,check_password_hash 
 import mysql.connector
 
@@ -390,7 +390,42 @@ def parent_home():
     cursor.close()
     return render_template('parent_home.html', timetable=timetable)
 
+@app.route('/add_calendar_event', methods=['POST'])
+def add_calendar_event():
+    if session.get('role') != 'admin':
+        return jsonify(success=False, message="Unauthorized")
 
+    data = request.get_json()
+    title = data.get('title')
+    date = data.get('date')
+    start_time = data.get('start_time')
+    end_time = data.get('end_time')
+
+    try:
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO events (title, event_date, start_time, end_time)
+            VALUES (%s, %s, %s, %s)
+        """, (title, date, start_time, end_time))
+        db.commit()
+        return jsonify(success=True)
+    except Exception as e:
+        print("Error saving event:", e)
+        return jsonify(success=False, message=str(e))
+@app.route('/teacher_calendar')
+def teacher_calendar():
+    if session.get('role') != 'teacher':
+        return redirect(url_for('login'))
+    return render_template('teacher_calendar.html')
+@app.route('/parent_calendar')
+def parent_calendar():
+    if session.get('role') != 'parent':
+        return redirect(url_for('login'))
+    return render_template('parent_calendar.html')
+# calender event 
+@app.route('/calendar')
+def calendar():
+    return render_template('calendar.html')
 
 @app.route('/admin')
 def admin_home():
